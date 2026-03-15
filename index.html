@@ -3,209 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Remle DUS">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#ffffff">
-    
-    <title>Remle Nur Sever DUS Asistanı</title>
+    <title>Remle DUS Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
-        :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            background: #fbfdff; 
-            padding-top: calc(var(--safe-top) + 10px);
-            padding-bottom: calc(var(--safe-bottom) + 20px);
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M40 70c-13.8 0-25-11.2-25-25 0-7.3 3.1-13.8 8.1-18.4L40 10l16.9 16.6c5 4.6 8.1 11.1 8.1 18.4 0 13.8-11.2 25-25 25zM22.5 45c0 9.7 7.8 17.5 17.5 17.5S57.5 54.7 57.5 45c0-5-2-9.6-5.4-13L40 19.3 27.9 32c-3.4 3.4-5.4 8-5.4 13z' fill='%236ee7b7' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
-        }
-        .tooth-glass { background: rgba(255, 255, 255, 0.9); border-radius: 30px; box-shadow: 0 12px 35px -10px rgba(110, 231, 183, 0.08); border: 1px solid rgba(110, 231, 183, 0.1); }
-        .timer-font { font-variant-numeric: tabular-nums; letter-spacing: -3px; font-weight: 800; font-family: 'Playfair Display', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.03); }
-        .remle-name { font-family: 'Playfair Display', serif; letter-spacing: -1px; }
-        .completed { text-decoration: line-through; opacity: 0.4; color: #a1a1aa !important; }
-        ::-webkit-scrollbar { display: none; }
-        
-        /* Buton Parlama Animasyonu */
-        @keyframes pulse-teal {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7); }
-            50% { box-shadow: 0 0 0 10px rgba(20, 184, 166, 0); }
-        }
-        #timerBtn.running { animation: pulse-teal 1.5s infinite; }
+        :root { --safe-top: env(safe-area-inset-top); }
+        body { font-family: 'Poppins', sans-serif; background: #f8fafc; padding-top: calc(var(--safe-top) + 20px); padding-bottom: 40px; }
+        .tooth-card { background: white; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 1.5rem; }
+        .timer-val { font-family: 'Playfair Display', serif; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+        .session-item { animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="px-4">
+<body class="px-5">
+    <div class="max-w-md mx-auto">
+        <div class="tooth-card p-6 text-center border-b-8 border-teal-500">
+            <div class="text-5xl mb-2">🦷</div>
+            <h1 class="text-2xl font-extrabold text-teal-900 tracking-tight">REMLE NUR SEVER</h1>
+            <div id="examDays" class="text-red-500 font-black text-sm mt-1 uppercase tracking-widest italic">-- GÜN KALDI</div>
+        </div>
 
-    <div class="max-w-md mx-auto space-y-5">
-        
-        <header class="tooth-glass p-6 text-center border-b-8 border-teal-500 relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-3 text-4xl text-teal-100 font-extrabold italic opacity-10">DUS</div>
-            <div class="w-20 h-20 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-3 shadow-inner">
-                <span class="text-6xl">🦷</span>
-            </div>
-            <h1 class="remle-name text-4xl font-extrabold text-teal-900 mb-1">REMLE NUR</h1>
-            <h2 class="remle-name text-3xl font-extrabold text-teal-800 tracking-tight opacity-90">SEVER</h2>
-            <div class="flex justify-between items-center mt-6 pt-4 border-t border-teal-50">
-                <input type="date" id="datePicker" onchange="changeDate()" class="bg-teal-50 text-teal-700 font-bold text-xs rounded-full px-3 py-1 outline-none border-none">
-                <div class="text-center bg-red-50 px-4 py-1.5 rounded-full border border-red-100">
-                    <p class="text-[9px] font-black text-red-400 uppercase tracking-widest">Sınava</p>
-                    <p id="examDays" class="text-3xl font-black text-red-600">--</p>
-                </div>
-            </div>
-        </header>
-
-        <main class="tooth-glass p-8 text-center shadow-xl">
-            <select id="courseSelect" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold text-slate-700 outline-none appearance-none text-center shadow-inner focus:border-teal-300">
-                <option value="">-- DERS SEÇİNİZ --</option>
+        <div class="tooth-card p-8 text-center">
+            <select id="courseSelect" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold text-slate-700 outline-none text-center appearance-none">
+                <option value="Genel Çalışma">-- DERS SEÇİNİZ --</option>
+                <option value="Anatomi">Anatomi</option><option value="Biyokimya">Biyokimya</option>
+                <option value="Mikro">Mikrobiyoloji</option><option value="Farma">Farmakoloji</option>
+                <option value="Klinik">Klinik Branşlar</option>
             </select>
+            <div id="targetTimer" class="timer-val text-7xl font-black text-slate-800 mb-2">06:00:00</div>
+            <p class="text-[10px] font-bold text-slate-400 tracking-[0.4em] mb-8">HEDEFE KALAN</p>
+            <button id="timerBtn" onclick="handleTimer()" class="w-full bg-teal-600 text-white font-black py-5 rounded-full text-xl shadow-lg active:scale-95 transition-all">BAŞLAT</button>
+        </div>
 
-            <div id="targetTimer" class="timer-font text-8xl text-slate-900 mb-2">06:00:00</div>
-            <p class="text-[10px] font-bold text-slate-400 tracking-[0.5em] mb-12 uppercase">HEDEFE KALAN SÜRE</p>
-            
-            <button id="timerBtn" onclick="handleTimer()" class="w-full bg-teal-600 text-white font-black py-5 rounded-full shadow-lg shadow-teal-100 active:scale-95 transition-all text-2xl tracking-widest">BAŞLAT</button>
-            
-            <div id="motivationMsg" class="mt-8 text-center text-sm font-semibold text-teal-800 italic opacity-80 max-w-sm mx-auto">
-                "Her saniye, DUS şampiyonluğuna bir adım daha yakın!"
-            </div>
-
-            <div class="flex justify-between mt-10 pt-6 border-t border-slate-50 text-xs font-bold text-slate-500">
-                <div>BUGÜN: <span id="doneTime" class="text-teal-600 text-base font-black ml-1">00:00:00</span></div>
-                <div>ODAK: <span id="courseCount" class="text-slate-800 text-base font-black ml-1">0 Ders</span></div>
-            </div>
-        </main>
-
-        <section class="tooth-glass p-6 border-l-8 border-yellow-400">
-            <h3 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest">📌 Görevler & Notlar</h3>
-            <div class="flex gap-2 mb-4">
-                <input type="text" id="noteInput" placeholder="Yeni not veya görev ekle..." class="flex-1 bg-slate-50 border-none p-3 rounded-2xl text-xs font-semibold outline-none focus:ring-1 focus:ring-yellow-200">
-                <button onclick="addNote()" class="bg-yellow-400 text-white px-5 rounded-2xl font-black hover:bg-yellow-500">+</button>
-            </div>
-            <div id="notesContainer" class="space-y-2 max-h-56 overflow-y-auto pr-1"></div>
-        </section>
-
-        <section class="tooth-glass p-6 h-full bg-teal-50/20">
-            <h3 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest">📊 Bugünün Özeti</h3>
-            <div id="courseSummary" class="grid grid-cols-2 gap-3 text-[10px] font-bold"></div>
-        </section>
-
-        <section class="tooth-glass p-6">
-            <div class="flex justify-between items-center mb-5 pb-3 border-b">
-                <h3 class="font-black text-[10px] text-slate-400 uppercase tracking-widest">📖 Genel Müfredat</h3>
-                <div class="flex gap-6 text-[8px] font-black text-teal-500">
-                    <span>KONU</span>
-                    <span>SORU</span>
+        <div class="tooth-card p-6">
+            <h3 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest flex justify-between">
+                📊 Çalışma Geçmişi <button onclick="clearAll()" class="text-red-400 lowercase font-normal">hepsini sil</button>
+            </h3>
+            <div id="logList" class="space-y-3">
                 </div>
-            </div>
-            <div id="mufredatGrid" class="space-y-2.5 max-h-72 overflow-y-auto pr-1"></div>
-        </section>
-
+        </div>
     </div>
 
     <script>
-        const DERSLER = ["Anatomi", "Biyokimya", "Mikrobiyoloji", "Farmakoloji", "Patoloji", "Fizyoloji", "Ortodonti", "Pedodonti", "Periyodontoloji", "Restoratif Diş", "Protez", "Cerrahi", "Radyo", "Endodonti"];
-        const MOTIVASYON = [
-            "DUS şampiyonluğu senin elinde, her saniye sayılır!",
-            "Diş hekimliği dünyasının zirvesi seni bekliyor!",
-            "Bu DUS'u parçalayacaksın!",
-            "Her zorlu konu, gelecekteki başarının bir parçası.",
-            "Son 26 gün, şimdi vites yükseltme zamanı!",
-            "Senin adın başarıyla anılacak, devam et!",
-            "Tarih yazmaya hazır ol DUS şampiyonu!",
-            "Bugünün emeği, yarının yüksek puanı!"
-        ];
-        const TARGET_MS = 6 * 60 * 60 * 1000;
         const EXAM_DATE = new Date('2026-04-26');
-        let isRunning = false, timerIdx, sessionStartTimeMs, currentDayKey = new Date().toLocaleDateString('tr-TR');
-        let db = JSON.parse(localStorage.getItem('remle_v12')) || { muf: {}, logs: {} };
-
-        function init() {
-            document.getElementById('datePicker').valueAsDate = new Date();
-            DERSLER.forEach(d => document.getElementById('courseSelect').innerHTML += `<option value="${d}">${d}</option>`);
-            renderMuf(); updateDisplay();
-            document.getElementById('noteInput').addEventListener('keypress', (e) => { if(e.key === 'Enter') addNote(); });
-            
-            // Rastgele motivasyon mesajı
-            document.getElementById('motivationMsg').innerText = MOTIVASYON[Math.floor(Math.random() * MOTIVASYON.length)];
-        }
-
-        function changeDate() {
-            currentDayKey = new Date(document.getElementById('datePicker').value).toLocaleDateString('tr-TR');
-            updateDisplay();
-        }
+        let isRunning = false, timerIdx, startMs;
+        let db = JSON.parse(localStorage.getItem('remle_v13')) || { totalMs: 0, sessions: [] };
 
         function updateDisplay() {
-            const diff = EXAM_DATE - new Date(document.getElementById('datePicker').value);
-            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-            if(!db.logs[currentDayKey]) db.logs[currentDayKey] = { time: 0, notes: [], sessions: [] };
-            const log = db.logs[currentDayKey];
-            log.time = log.sessions.reduce((acc, s) => acc + s.duration, 0);
-            document.getElementById('targetTimer').innerText = msToTime(Math.max(0, TARGET_MS - log.time));
-            document.getElementById('doneTime').innerText = msToTime(log.time);
-            renderNotes(); renderCourseSummary();
+            const diff = EXAM_DATE - new Date();
+            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff / 86400000)) + " GÜN KALDI";
+            document.getElementById('targetTimer').innerText = msToT(Math.max(0, 21600000 - db.totalMs));
+            
+            const list = document.getElementById('logList');
+            list.innerHTML = '';
+            db.sessions.slice().reverse().forEach((s, idx) => {
+                list.innerHTML += `
+                    <div class="session-item flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-white shadow-sm">
+                        <div class="text-left">
+                            <div class="text-xs font-black text-slate-700">${s.course}</div>
+                            <div class="text-[10px] text-slate-400 font-bold">${s.timeStr} süresince</div>
+                        </div>
+                        <button onclick="deleteSession(${db.sessions.length - 1 - idx})" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center shadow-sm">×</button>
+                    </div>`;
+            });
         }
 
         function handleTimer() {
-            const course = document.getElementById('courseSelect').value;
-            if(currentDayKey !== new Date().toLocaleDateString('tr-TR')) { alert("Sadece bugüne canlı kayıt yapabilirsin!"); return; }
-            if(!course && !isRunning) { alert("Ders seçmelisin!"); return; }
             const btn = document.getElementById('timerBtn');
-
+            const course = document.getElementById('courseSelect').value;
             if(!isRunning) {
-                isRunning = true; sessionStartTimeMs = Date.now();
-                btn.innerText = "DURDUR"; btn.classList.add('running');
-                btn.classList.replace('bg-teal-600', 'bg-red-500');
+                isRunning = true; startMs = Date.now();
+                btn.innerText = "DURDUR"; btn.classList.replace('bg-teal-600', 'bg-red-500');
                 timerIdx = setInterval(() => {
-                    const temp = db.logs[currentDayKey].time + (Date.now() - sessionStartTimeMs);
-                    document.getElementById('targetTimer').innerText = msToTime(Math.max(0, TARGET_MS - temp));
-                    document.getElementById('doneTime').innerText = msToTime(temp);
+                    const currentTotal = db.totalMs + (Date.now() - startMs);
+                    document.getElementById('targetTimer').innerText = msToT(Math.max(0, 21600000 - currentTotal));
                 }, 1000);
             } else {
                 isRunning = false; clearInterval(timerIdx);
-                btn.classList.remove('running');
-                const dur = Date.now() - sessionStartTimeMs;
-                if(dur > 1000) db.logs[currentDayKey].sessions.push({ id: Date.now(), start: new Date(sessionStartTimeMs).toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}), end: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}), course, duration: dur });
-                btn.innerText = "BAŞLAT";
-                btn.classList.replace('bg-red-500', 'bg-teal-600');
+                const sessionDur = Date.now() - startMs;
+                if(sessionDur > 1000) {
+                    db.totalMs += sessionDur;
+                    db.sessions.push({ course, duration: sessionDur, timeStr: msToT(sessionDur) });
+                    save();
+                }
+                btn.innerText = "BAŞLAT"; btn.classList.replace('bg-red-500', 'bg-teal-600');
+                updateDisplay();
+            }
+        }
+
+        function deleteSession(idx) {
+            if(confirm("Bu çalışmayı silmek istediğine emin misin?")) {
+                db.totalMs -= db.sessions[idx].duration;
+                db.sessions.splice(idx, 1);
                 save(); updateDisplay();
             }
         }
 
-        function renderMuf() {
-            const grid = document.getElementById('mufredatGrid'); grid.innerHTML = '';
-            DERSLER.forEach(d => {
-                const k = d+'_k', s = d+'_s';
-                grid.innerHTML += `<div class="p-3 bg-white border border-slate-100 rounded-2xl flex justify-between items-center"><span class="text-[11px] font-bold text-slate-700">${d}</span><div class="flex gap-7 mr-1"><input type="checkbox" onchange="toggleMuf('${k}')" ${db.muf[k]?'checked':''} class="w-5 h-5 accent-teal-600"><input type="checkbox" onchange="toggleMuf('${s}')" ${db.muf[s]?'checked':''} class="w-5 h-5 accent-yellow-500"></div></div>`;
-            });
+        function clearAll() {
+            if(confirm("Tüm bugünkü verilerini silmek üzeresin. Emin misin?")) {
+                db = { totalMs: 0, sessions: [] };
+                save(); updateDisplay();
+            }
         }
 
-        function renderNotes() {
-            const container = document.getElementById('notesContainer'); container.innerHTML = '';
-            (db.logs[currentDayKey].notes || []).forEach(n => {
-                container.innerHTML += `<div class="flex items-center gap-3 bg-white p-3 rounded-xl border border-white"><input type="checkbox" onchange="toggleNote(${n.id})" ${n.done?'checked':''} class="w-4 h-4 accent-green-500"><span class="flex-1 text-[11px] font-semibold ${n.done?'completed':''} text-slate-600">${n.text}</span><button onclick="deleteNote(${n.id})" class="text-slate-300 font-bold px-1">×</button></div>`;
-            });
+        function msToT(ms) { 
+            let s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); 
+            return `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; 
         }
-
-        function renderCourseSummary() {
-            const div = document.getElementById('courseSummary'); div.innerHTML = '';
-            const summary = {}; (db.logs[currentDayKey].sessions || []).forEach(s => summary[s.course] = (summary[s.course] || 0) + s.duration);
-            Object.entries(summary).sort((a,b)=>b[1]-a[1]).forEach(([n, t]) => {
-                div.innerHTML += `<div class="p-2.5 bg-teal-50 rounded-xl text-teal-700"><span>${n}:</span> ${msToTime(t)}</div>`;
-            });
-            document.getElementById('courseCount').innerText = Object.keys(summary).length + " Ders";
-        }
-
-        function addNote() { const val = document.getElementById('noteInput').value; if(!val.trim()) return; db.logs[currentDayKey].notes.push({ id: Date.now(), text: val, done: false }); document.getElementById('noteInput').value = ''; save(); renderNotes(); }
-        function toggleNote(id) { const n = db.logs[currentDayKey].notes.find(x => x.id === id); if(n) n.done = !n.done; save(); renderNotes(); }
-        function deleteNote(id) { db.logs[currentDayKey].notes = db.logs[currentDayKey].notes.filter(x => x.id !== id); save(); renderNotes(); }
-        function toggleMuf(k) { db.muf[k] = !db.muf[k]; save(); }
-        function msToTime(ms) { let s = Math.floor(ms / 1000); let m = Math.floor(s / 60); let h = Math.floor(m / 60); return `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
-        function save() { localStorage.setItem('remle_v12', JSON.stringify(db)); }
-        init();
+        function save() { localStorage.setItem('remle_v13', JSON.stringify(db)); }
+        updateDisplay();
     </script>
 </body>
 </html>
