@@ -5,131 +5,119 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Remle DUS Master</title>
+    <title>Remle DUS Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --safe-top: env(safe-area-inset-top); }
-        body { font-family: 'Poppins', sans-serif; background: #f1f5f9; padding-top: calc(var(--safe-top) + 10px); padding-bottom: 60px; }
-        .card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 1rem; overflow: hidden; }
-        .btn-grad { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); transition: all 0.3s; }
-        .timer-font { font-family: 'Playfair Display', serif; font-variant-numeric: tabular-nums; }
-        input[type="checkbox"]:checked + label { text-decoration: line-through; opacity: 0.5; }
+        body { font-family: 'Poppins', sans-serif; background: #f8fafc; padding-top: calc(var(--safe-top) + 20px); padding-bottom: 50px; }
+        .tooth-card { background: white; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 1.5rem; overflow: hidden; }
+        .timer-val { font-family: 'Playfair Display', serif; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
+        .delete-btn { color: #ef4444; background: #fee2e2; border-radius: 10px; padding: 2px 8px; font-weight: bold; font-size: 14px; }
     </style>
 </head>
-<body class="px-4">
-    <div class="max-w-md mx-auto">
-        <div class="card p-6 text-center border-b-4 border-teal-600">
-            <h1 class="text-xl font-black text-slate-800 tracking-tight">REMLE NUR SEVER</h1>
-            <div id="examDays" class="text-red-500 font-bold text-xs mt-1 uppercase tracking-widest italic animate-pulse">-- GÜN KALDI</div>
+<body class="px-5">
+    <div class="max-w-md mx-auto space-y-6">
+        <div class="tooth-card p-6 text-center border-b-8 border-teal-500">
+            <div class="text-5xl mb-2">🦷</div>
+            <h1 class="text-3xl font-extrabold text-teal-900 tracking-tight uppercase">REMLE NUR SEVER</h1>
+            <div id="examDays" class="text-red-500 font-black text-xs mt-2 tracking-[0.3em] italic">-- GÜN KALDI</div>
         </div>
 
-        <div class="card p-5">
-            <div class="flex justify-between items-end mb-2 text-[10px] font-black text-slate-400 uppercase">
+        <div class="tooth-card p-6">
+            <div class="flex justify-between items-end mb-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                 <span>Günlük Hedef (6 Saat)</span>
-                <span id="progPct" class="text-teal-600">0%</span>
+                <span id="progPct" class="text-teal-600 text-sm">0%</span>
             </div>
-            <div class="w-full bg-slate-100 h-2.5 rounded-full"><div id="progBar" class="bg-teal-500 h-full w-0 rounded-full transition-all duration-1000"></div></div>
-        </div>
-
-        <div class="card p-6 text-center">
-            <select id="course" class="w-full bg-slate-50 border-0 p-3 rounded-xl mb-4 font-bold text-slate-600 text-sm outline-none">
-                <option>Anatomi</option><option>Biyokimya</option><option>Mikro</option><option>Farma</option><option>Klinik</option><option>Diğer</option>
-            </select>
-            <div id="timer" class="timer-font text-6xl font-black text-slate-800 mb-5">06:00:00</div>
-            <button id="tBtn" onclick="toggleTimer()" class="w-full btn-grad text-white font-black py-4 rounded-2xl shadow-lg active:scale-95">BAŞLAT</button>
-        </div>
-
-        <div class="card p-5">
-            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 text-center tracking-widest italic">📅 Haftalık Performans</h3>
+            <div class="w-full bg-slate-100 h-3 rounded-full mb-6 overflow-hidden">
+                <div id="progBar" class="bg-teal-500 h-full w-0 transition-all duration-1000"></div>
+            </div>
             <div id="weekCal" class="flex justify-between gap-1"></div>
         </div>
 
-        <div class="card p-5">
-            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">✅ Ders Takip</h3>
-            <div id="checkList" class="space-y-3 text-sm font-semibold text-slate-700">
-                </div>
+        <div class="tooth-card p-8 text-center">
+            <select id="courseSelect" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold text-slate-700 appearance-none">
+                <option>Anatomi</option><option>Biyokimya</option><option>Mikrobiyoloji</option>
+                <option>Farmakoloji</option><option>Klinik Branşlar</option><option>Soru Çözümü</option>
+            </select>
+            <div id="targetTimer" class="timer-val text-7xl font-black text-slate-800 mb-8">06:00:00</div>
+            <button id="timerBtn" onclick="handleTimer()" class="w-full bg-teal-600 text-white font-black py-5 rounded-full text-xl shadow-lg shadow-teal-100 active:scale-95 transition-all">BAŞLAT</button>
         </div>
 
-        <div class="card p-5">
-            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">📝 Hızlı Notlar</h3>
-            <textarea id="notes" oninput="saveNotes()" class="w-full bg-yellow-50 p-4 rounded-xl text-sm border-none focus:ring-0 min-h-[100px]" placeholder="Bugün neler öğrendin?"></textarea>
-        </div>
-
-        <div class="card p-5">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Geçmiş</h3>
-                <button onclick="resetAll()" class="text-[9px] text-red-300 font-bold uppercase underline">Tümünü Sıfırla</button>
+        <div class="tooth-card p-6">
+            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-4 tracking-widest">✅ Ders Takip Listesi</h3>
+            <div class="space-y-3 font-bold text-slate-700">
+                <div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-0"><label>Anatomi Tekrarı</label></div>
+                <div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-0"><label>Mikrobiyoloji Soru</label></div>
+                <div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded-lg border-slate-300 text-teal-600 focus:ring-0"><label>Klinik Deneme Analizi</label></div>
             </div>
-            <div id="logs" class="space-y-2"></div>
+        </div>
+
+        <div class="tooth-card p-6">
+            <h3 class="text-[10px] font-black text-slate-400 uppercase mb-3 tracking-widest">📝 Bugünün Notu</h3>
+            <textarea id="notesArea" oninput="saveNotes()" class="w-full bg-yellow-50 p-4 rounded-2xl text-sm border-none focus:ring-0 min-h-[120px]" placeholder="Önemli bir şey not et..."></textarea>
+        </div>
+
+        <div class="tooth-card p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Çalışma Logları</h3>
+                <button onclick="clearAll()" class="text-[9px] text-red-300 font-bold uppercase underline">Sıfırla</button>
+            </div>
+            <div id="logList" class="space-y-3"></div>
         </div>
     </div>
 
     <script>
         const EXAM_DATE = new Date('2026-04-26');
         const GOAL = 21600000;
-        let isRunning = false, start, tIdx;
-        let db = JSON.parse(localStorage.getItem('remle_v16')) || { 
-            history: {}, sessions: [], notes: "", 
-            checks: ["Anatomi 1. Tekrar", "Fizyo 1. Tekrar", "Farma Soru Çözümü", "Klinik Deneme"] 
-        };
+        let isRunning = false, tIdx, start;
+        let db = JSON.parse(localStorage.getItem('remle_v17')) || { history: {}, sessions: [], notes: "" };
 
         function update() {
             const today = new Date().toISOString().split('T')[0];
             const diff = EXAM_DATE - new Date();
-            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff/86400000)) + " GÜN KALDI 🦷";
+            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff/86400000)) + " GÜN KALDI";
             
             const todayT = db.history[today] || 0;
-            document.getElementById('timer').innerText = msToT(Math.max(0, GOAL - todayT));
+            document.getElementById('targetTimer').innerText = msToT(Math.max(0, GOAL - todayT));
             const p = Math.min(100, Math.round((todayT/GOAL)*100));
             document.getElementById('progBar').style.width = p+"%";
             document.getElementById('progPct').innerText = p+"%";
-            document.getElementById('notes').value = db.notes;
+            document.getElementById('notesArea').value = db.notes || "";
 
-            // Loglar (X butonu dahil)
-            const logDiv = document.getElementById('logs');
-            logDiv.innerHTML = db.sessions.length ? '' : '<p class="text-[10px] text-slate-300 text-center">Kayıt yok.</p>';
+            const logDiv = document.getElementById('logList');
+            logDiv.innerHTML = '';
             db.sessions.slice(-5).reverse().forEach((s, i) => {
-                logDiv.innerHTML += `<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl text-[11px] font-bold">
-                    <span>${s.course} - ${s.time}</span>
-                    <button onclick="delS(${db.sessions.length - 1 - i})" class="text-red-400 text-lg px-2">✕</button>
+                logDiv.innerHTML += `<div class="flex justify-between items-center bg-slate-50 p-3 rounded-xl border border-white">
+                    <div class="text-[11px] font-bold text-slate-700">${s.course} <span class="text-slate-400 ml-2">${s.time}</span></div>
+                    <button onclick="delSession(${db.sessions.length - 1 - i})" class="delete-btn">✕</button>
                 </div>`;
             });
 
-            // Ders Tikleri
-            const cList = document.getElementById('checkList');
-            cList.innerHTML = '';
-            db.checks.forEach((item, i) => {
-                cList.innerHTML += `<div class="flex items-center gap-3">
-                    <input type="checkbox" id="c${i}" class="w-5 h-5 rounded-md border-slate-300 text-teal-600 focus:ring-0">
-                    <label for="c${i}">${item}</label>
-                </div>`;
-            });
-
-            // Takvim
             const cal = document.getElementById('weekCal'); cal.innerHTML = '';
             for(let i=6; i>=0; i--) {
                 const d = new Date(); d.setDate(d.getDate()-i);
                 const k = d.toISOString().split('T')[0];
-                const h = Math.min(100, Math.round(((db.history[k]||0)/GOAL)*100));
+                const val = db.history[k] || 0;
+                const h = Math.min(100, Math.round((val/GOAL)*100));
                 cal.innerHTML += `<div class="flex-1 flex flex-col items-center">
-                    <div class="w-full bg-slate-100 h-12 rounded-md flex flex-col justify-end overflow-hidden">
+                    <div class="w-full bg-slate-100 h-16 rounded-xl flex flex-col justify-end overflow-hidden">
                         <div class="bg-teal-400 w-full" style="height:${h}%"></div>
                     </div>
-                    <span class="text-[7px] font-bold text-slate-400 mt-1 uppercase">${d.toLocaleDateString('tr',{weekday:'short'})}</span>
+                    <span class="text-[8px] font-black text-slate-400 mt-2 uppercase">${d.toLocaleDateString('tr',{weekday:'short'})}</span>
                 </div>`;
             }
         }
 
-        function toggleTimer() {
-            const btn = document.getElementById('tBtn');
+        function handleTimer() {
+            const btn = document.getElementById('timerBtn');
             if(!isRunning) {
                 isRunning = true; start = Date.now();
                 btn.innerText = "DURDUR"; btn.style.background = "#ef4444";
                 tIdx = setInterval(() => {
                     const today = new Date().toISOString().split('T')[0];
                     const nowT = (db.history[today]||0) + (Date.now()-start);
-                    document.getElementById('timer').innerText = msToT(Math.max(0, GOAL - nowT));
+                    document.getElementById('targetTimer').innerText = msToT(Math.max(0, GOAL - nowT));
                 }, 1000);
             } else {
                 isRunning = false; clearInterval(tIdx);
@@ -137,16 +125,16 @@
                 if(dur > 1000) {
                     const today = new Date().toISOString().split('T')[0];
                     db.history[today] = (db.history[today]||0) + dur;
-                    db.sessions.push({ course: document.getElementById('course').value, duration: dur, time: msToT(dur), date: today });
+                    db.sessions.push({ course: document.getElementById('courseSelect').value, duration: dur, time: msToT(dur), date: today });
                     save();
                 }
-                btn.innerText = "BAŞLAT"; btn.style.background = "";
+                btn.innerText = "BAŞLAT"; btn.style.background = "#0d9488";
                 update();
             }
         }
 
-        function delS(i) {
-            if(confirm("Silinsin mi?")) {
+        function delSession(i) {
+            if(confirm("Bu kaydı sileyim mi?")) {
                 const s = db.sessions[i];
                 db.history[s.date] -= s.duration;
                 db.sessions.splice(i, 1);
@@ -154,9 +142,9 @@
             }
         }
 
-        function saveNotes() { db.notes = document.getElementById('notes').value; save(); }
-        function save() { localStorage.setItem('remle_v16', JSON.stringify(db)); }
-        function resetAll() { if(confirm("Tüm uygulama sıfırlansın mı?")) { db={history:{}, sessions:[], notes:"", checks:db.checks}; save(); update(); } }
+        function saveNotes() { db.notes = document.getElementById('notesArea').value; save(); }
+        function save() { localStorage.setItem('remle_v17', JSON.stringify(db)); }
+        function clearAll() { if(confirm("Tüm veriler sıfırlansın mı?")) { db={history:{}, sessions:[], notes:""}; save(); update(); } }
         function msToT(ms) { let s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); return `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
         update();
     </script>
