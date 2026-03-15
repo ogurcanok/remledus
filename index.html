@@ -10,62 +10,67 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root { --safe-top: env(safe-area-inset-top); }
-        body { font-family: 'Poppins', sans-serif; background: #f8fafc; padding-top: calc(var(--safe-top) + 20px); padding-bottom: 40px; }
-        .tooth-card { background: white; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); margin-bottom: 1.5rem; }
-        .timer-val { font-family: 'Playfair Display', serif; font-variant-numeric: tabular-nums; letter-spacing: -2px; }
-        .session-item { animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; padding-top: calc(var(--safe-top) + 20px); padding-bottom: 50px; -webkit-tap-highlight-color: transparent; }
+        .tooth-card { background: white; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 1.2rem; overflow: hidden; }
+        .timer-val { font-family: 'Playfair Display', serif; font-variant-numeric: tabular-nums; }
+        .delete-btn { background: #fee2e2; color: #ef4444; border-radius: 15px; padding: 8px 15px; font-weight: 800; font-size: 18px; }
+        button:active { transform: scale(0.96); }
     </style>
 </head>
 <body class="px-5">
     <div class="max-w-md mx-auto">
-        <div class="tooth-card p-6 text-center border-b-8 border-teal-500">
-            <div class="text-5xl mb-2">🦷</div>
-            <h1 class="text-2xl font-extrabold text-teal-900 tracking-tight">REMLE NUR SEVER</h1>
-            <div id="examDays" class="text-red-500 font-black text-sm mt-1 uppercase tracking-widest italic">-- GÜN KALDI</div>
+        <div class="tooth-card p-6 text-center border-b-4 border-teal-500">
+            <h1 class="text-2xl font-black text-slate-800 tracking-tight">REMLE NUR SEVER</h1>
+            <div id="examDays" class="text-red-500 font-bold text-xs mt-1 uppercase tracking-widest italic animate-pulse">-- GÜN</div>
         </div>
 
         <div class="tooth-card p-8 text-center">
-            <select id="courseSelect" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold text-slate-700 outline-none text-center appearance-none">
-                <option value="Genel Çalışma">-- DERS SEÇİNİZ --</option>
+            <select id="courseSelect" class="w-full bg-slate-50 border-2 border-slate-100 p-4 rounded-2xl mb-6 font-bold text-slate-600 outline-none text-center">
+                <option value="Genel Çalışma">-- DERS SEÇ --</option>
                 <option value="Anatomi">Anatomi</option><option value="Biyokimya">Biyokimya</option>
-                <option value="Mikro">Mikrobiyoloji</option><option value="Farma">Farmakoloji</option>
+                <option value="Mikrobiyoloji">Mikrobiyoloji</option><option value="Farmakoloji">Farmakoloji</option>
                 <option value="Klinik">Klinik Branşlar</option>
             </select>
-            <div id="targetTimer" class="timer-val text-7xl font-black text-slate-800 mb-2">06:00:00</div>
-            <p class="text-[10px] font-bold text-slate-400 tracking-[0.4em] mb-8">HEDEFE KALAN</p>
-            <button id="timerBtn" onclick="handleTimer()" class="w-full bg-teal-600 text-white font-black py-5 rounded-full text-xl shadow-lg active:scale-95 transition-all">BAŞLAT</button>
+            <div id="targetTimer" class="timer-val text-6xl font-black text-slate-800 mb-6">06:00:00</div>
+            <button id="timerBtn" onclick="handleTimer()" class="w-full bg-teal-600 text-white font-black py-5 rounded-3xl text-xl shadow-xl transition-all">BAŞLAT</button>
         </div>
 
         <div class="tooth-card p-6">
-            <h3 class="font-black text-[10px] text-slate-400 uppercase mb-4 tracking-widest flex justify-between">
-                📊 Çalışma Geçmişi <button onclick="clearAll()" class="text-red-400 lowercase font-normal">hepsini sil</button>
-            </h3>
-            <div id="logList" class="space-y-3">
-                </div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black text-[11px] text-slate-400 uppercase tracking-widest">Çalışma Logları</h3>
+                <button onclick="clearAll()" class="text-xs font-bold text-red-400">SIFIRLA</button>
+            </div>
+            <div id="logList" class="space-y-3"></div>
         </div>
     </div>
 
     <script>
         const EXAM_DATE = new Date('2026-04-26');
         let isRunning = false, timerIdx, startMs;
-        let db = JSON.parse(localStorage.getItem('remle_v13')) || { totalMs: 0, sessions: [] };
+        // v14 ile yeni bir hafıza alanı açıyoruz ki çakışma olmasın
+        let db = JSON.parse(localStorage.getItem('remle_v14')) || { totalMs: 0, sessions: [] };
 
         function updateDisplay() {
             const diff = EXAM_DATE - new Date();
-            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff / 86400000)) + " GÜN KALDI";
+            document.getElementById('examDays').innerText = Math.max(0, Math.ceil(diff / 86400000)) + " GÜN KALDI 🦷";
             document.getElementById('targetTimer').innerText = msToT(Math.max(0, 21600000 - db.totalMs));
             
             const list = document.getElementById('logList');
             list.innerHTML = '';
+            
+            if(db.sessions.length === 0) {
+                list.innerHTML = '<p class="text-center text-slate-300 text-sm py-4">Henüz kayıt yok.</p>';
+            }
+
             db.sessions.slice().reverse().forEach((s, idx) => {
+                const realIdx = db.sessions.length - 1 - idx;
                 list.innerHTML += `
-                    <div class="session-item flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-white shadow-sm">
-                        <div class="text-left">
-                            <div class="text-xs font-black text-slate-700">${s.course}</div>
-                            <div class="text-[10px] text-slate-400 font-bold">${s.timeStr} süresince</div>
+                    <div class="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-white">
+                        <div>
+                            <div class="text-xs font-black text-slate-800">${s.course}</div>
+                            <div class="text-[11px] text-slate-400 font-bold">${s.timeStr}</div>
                         </div>
-                        <button onclick="deleteSession(${db.sessions.length - 1 - idx})" class="bg-red-50 text-red-500 w-10 h-10 rounded-full font-bold text-lg flex items-center justify-center shadow-sm">×</button>
+                        <button onclick="deleteSession(${realIdx})" class="delete-btn">✕</button>
                     </div>`;
             });
         }
@@ -75,7 +80,7 @@
             const course = document.getElementById('courseSelect').value;
             if(!isRunning) {
                 isRunning = true; startMs = Date.now();
-                btn.innerText = "DURDUR"; btn.classList.replace('bg-teal-600', 'bg-red-500');
+                btn.innerText = "DURDUR"; btn.style.background = "#ef4444";
                 timerIdx = setInterval(() => {
                     const currentTotal = db.totalMs + (Date.now() - startMs);
                     document.getElementById('targetTimer').innerText = msToT(Math.max(0, 21600000 - currentTotal));
@@ -88,13 +93,13 @@
                     db.sessions.push({ course, duration: sessionDur, timeStr: msToT(sessionDur) });
                     save();
                 }
-                btn.innerText = "BAŞLAT"; btn.classList.replace('bg-red-500', 'bg-teal-600');
+                btn.innerText = "BAŞLAT"; btn.style.background = "#0d9488";
                 updateDisplay();
             }
         }
 
         function deleteSession(idx) {
-            if(confirm("Bu çalışmayı silmek istediğine emin misin?")) {
+            if(confirm("Bu kaydı silmek istediğine emin misin?")) {
                 db.totalMs -= db.sessions[idx].duration;
                 db.sessions.splice(idx, 1);
                 save(); updateDisplay();
@@ -102,7 +107,7 @@
         }
 
         function clearAll() {
-            if(confirm("Tüm bugünkü verilerini silmek üzeresin. Emin misin?")) {
+            if(confirm("Tüm veriler sıfırlansın mı?")) {
                 db = { totalMs: 0, sessions: [] };
                 save(); updateDisplay();
             }
@@ -112,7 +117,9 @@
             let s=Math.floor(ms/1000), m=Math.floor(s/60), h=Math.floor(m/60); 
             return `${h.toString().padStart(2,'0')}:${(m%60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; 
         }
-        function save() { localStorage.setItem('remle_v13', JSON.stringify(db)); }
+        function save() { localStorage.setItem('remle_v14', JSON.stringify(db)); }
+        
+        // Başlangıçta ekranı güncelle
         updateDisplay();
     </script>
 </body>
